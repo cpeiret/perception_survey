@@ -29,6 +29,9 @@ clean_data$d5r = dplyr::na_if(clean_data$d5r, 9) # set DK/NA values as NA
 clean_data<- clean_data[complete.cases(clean_data), ]
 
 # see how many cases we have per city now
-cases_clean = clean_data %>% group_by(cities) %>% count() %>% summarise(mean(n))
-cases_raw = raw_data %>% group_by(cities) %>% count()
-cases_dif = cases_raw$n - cases_clean$n
+clean_data %>% group_by(cities) %>% count() %>% ungroup() %>% summarise(mean(n)) # mean cases per city after cleaning
+raw_data %>% group_by(cities) %>% count() %>% ungroup() %>% summarise(mean(n)) # mean cases per city before cleaning
+clean_data %>% group_by(cities) %>% count() %>% ungroup() %>% summarise(max(n)) # max n of cases per city after cleaning
+raw_data %>% group_by(cities) %>% count() %>% ungroup() %>% summarise(max(n)) # max n of cases per city before cleaning
+clean_data %>% group_by(cities) %>% count() %>% ungroup() %>% summarise(min(n)) # min n of cases per city after cleaning
+raw_data %>% group_by(cities) %>% count() %>% ungroup() %>% summarise(min(n)) # min n of cases per city before cleaning

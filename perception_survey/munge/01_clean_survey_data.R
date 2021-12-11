@@ -3,7 +3,7 @@
 clean_data = raw_data
 
 # keep needed columns
-variables = lapply(raw_data[colnames(raw_data)], var_lab) # see what each column means
+
 clean_data = clean_data[,c(8,11:13,22,33,39,55,57,60:62,66:98, 137:141)] # keep only needed columns
 variables_clean = lapply(clean_data[colnames(clean_data)], var_lab) # see what each column means
 
@@ -88,7 +88,7 @@ clean_data = mutate(clean_data,
                     )
 )
 
-clean_data[,c(9:11, 17:45)] = lapply(clean_data[,c(9:11, 17:45)], unclass)
+clean_data[,c(9:11, 17:45)] = lapply(clean_data[,c(9:11, 17:45)], unclass) # unclass dummy variables
 
 
 

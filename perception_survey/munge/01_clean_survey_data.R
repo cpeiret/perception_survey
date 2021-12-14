@@ -162,3 +162,57 @@ clean_data = apply_labels(clean_data,
                           air_satisfaction = "Satisfaction with air quality in the city",
                           cc_fight = "Satisfaction with the way the city fights climate change"
 )
+
+
+# Add dummy variables for classical territorial divisions
+
+eastern_europe = c("BG","CZ","HU","PL","RO","SK")
+western_europe = c("AT","BE","FR","DE","LU","NL","LI","CH")
+northern_europe = c("DK","EE","FI","LV","LT","SE","IE","IS","NO","UK")
+southern_europe = c("HR","EL","IT","MT","PT","ES","SI","BA","RS","MK","AL")
+
+# column for Western Europe
+
+clean_data$eastern_europe = ifelse(clean_data$isocntry %in% eastern_europe,1,0) # column for eastern europe
+clean_data$western_europe = ifelse(clean_data$isocntry %in% western_europe,1,0) # column for western europe
+clean_data$northern_europe = ifelse(clean_data$isocntry %in% northern_europe,1,0) # column for northern europe
+clean_data$southern_europe = ifelse(clean_data$isocntry %in% southern_europe,1,0) # column for southern europe
+
+# add corruption perception index
+
+transparency = get_eurostat("sdg_16_50", time_format = "num") # download data
+transparency = transparency %>% filter(time == 2015) # filter for 2015
+transparency = transparency[,-c(1,3)] # remove time column
+clean_data = merge(clean_data, transparency, by.x = "isocntry", by.y = "geo")
+clean_data = clean_data %>% rename(transparency = values)
+
+# add labels to variables
+clean_data = apply_labels(clean_data,
+                          inc = "Incumbency advantage: mayor has been in office +10 years",
+                          ideo = "Mayor's party identifies with progressive values",
+                          population = "City's population",
+                          gdp_pc = "City's GDP per capita",
+                          pop_density = "City's population density",
+                          oldage_dependency = "City's old age dependency ratio",
+                          inequality = "Disposable income of households at decile 1 as percentage of decile 10 in the city",
+                          eastern_europe = "Eastern Europe countries",
+                          western_europe = "Western Europe countries",
+                          southern_europe = "Southern Europe countries",
+                          northern_europe = "Northern Europe countries",
+                          transparency = "Country's performance in transaparency index (0-100)"
+                          )
+
+# # create variable for nationality
+# 
+# clean_data = mutate(clean_data,
+#                     nationality = case_when(
+#                       d3a_5 == 1 ~ 1,
+#                       d3a_7 == 1 ~ 1,
+#                       d3a_26 == 1 ~ 1,
+#                       TRUE ~ 0
+#                     ))
+
+
+# save clean_data as csv and dta
+write.csv(clean_data,"data/clean_data.csv") # write as csv
+write_dta(clean_data, "data/clean_data.dta") # write as dta

@@ -8,7 +8,7 @@ munging: TRUE
 logging: FALSE
 logging_level: INFO
 load_libraries: TRUE
-libraries: reshape2, plyr, tidyverse, stringr, lubridate, dplyr, ggplot2, expss, RColorBrewer, viridis, wesanderson, plotly, leaflet, sp, tmap, ggrepel, eurostat, labelled, haven
+libraries: reshape2, plyr, tidyverse, stringr, lubridate, dplyr, ggplot2, expss, RColorBrewer, viridis, wesanderson, plotly, leaflet, sp, tmap, ggrepel, eurostat, labelled, haven, extrafont
 as_factors: FALSE
 tables_type: tibble
 attach_internal_libraries: FALSE

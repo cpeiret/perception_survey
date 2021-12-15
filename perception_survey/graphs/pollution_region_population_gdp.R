@@ -30,10 +30,10 @@ city_data = clean_data %>%
 
 pal = c("#264653", "#2A9D8F", "#E9C46A", "#E76F51")
 
-ggplot(data = city_data, aes(x = gdp_pc, y = pm25_2015)) +
+ggplot(data = city_data, aes(x = gdp_pc, y = pm25_2015, label = cities)) +
   geom_point(aes(colour = regions, size = population), alpha = 0.7) +
   scale_color_manual(values = pal, name = "Region", labels = c("Eastern Europe", "Northern Europe", "Southern Europe", "Western Europe")) +
-  scale_size(range = c(1, 50), name = "Population", labels = scales::comma) +
+  scale_size(range = c(5, 50), name = "Population", labels = scales::comma) +
   guides(colour = guide_legend(override.aes = list(size = 5)), size = guide_legend(override.aes = list(colour = "grey"))) +
   theme_minimal() +
   scale_x_continuous(labels = scales::comma, name = "GDP per capita in euros") +
@@ -47,7 +47,6 @@ The relationship between city size and pollution is not clear, as we see cities 
         legend.title = element_text(size = 16),
         axis.text.x = element_text(size = 12),
         axis.text.y = element_text(size = 12))
-
 
 
 

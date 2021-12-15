@@ -44,8 +44,7 @@ p = ggplot(plot_data, aes(pm25, city_name)) +
   geom_point(data = highlight, aes(colour = year), size = 2) +
   geom_text(data = plot_labels, aes(colour = year, 
                                    label = paste0("-", scales::percent(round(Diff,1)))),
-            size = 3, hjust = -.5) +
-  scale_color_grey()
+            size = 3, hjust = -.5)
 
 
 diff = diff %>%
@@ -56,19 +55,22 @@ p2 = p + scale_color_discrete(labels = c("2000", "2015")) +
                      breaks = seq(0,40, by = 5)) +
   scale_y_discrete(expand = c(0.02, 0)) +
   labs(title = "Evolution of PM2.5 annual average concentration", 
-       subtitle = "blah, blah, blah") +
+       subtitle = "Between 2000 and 2015, all cities in the sample reduced their annual average concentration of PM2.5 particles. 
+However, some of them still did not comply with WHO's maximum recommended concentration level of 25 µg/m3.") +
   theme_minimal() +
   theme(axis.title = element_blank(),
+        axis.text.x = element_text(size = 8),
         panel.grid.major.x = element_blank(),
         panel.grid.minor = element_blank(),
         legend.title = element_blank(),
         legend.justification = c(0,1),
-        legend.position = c(.1, 1.075),
+        legend.position = c(0.025, 1.025),
         legend.background = element_blank(),
         legend.direction = "horizontal",
         text = element_text(family = "Tahoma"),
         plot.title = element_text(size = 20, margin = margin(b = 10)),
         plot.subtitle = element_text(size = 10, margin = margin(b = 25)),
         plot.caption = element_text(size = 8, margin = margin(t = 10), color = "grey70", hjust = 0),
-        axis.text = element_text(size = 8))
+        axis.text.y = element_text(size = 8))
 p2
+

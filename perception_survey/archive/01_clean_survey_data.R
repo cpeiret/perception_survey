@@ -1,14 +1,9 @@
 # clean the data
-# duplicate df
-clean_data = raw_data
 
-# keep only needed columns
-
-clean_data = clean_data[,-c(1:7,9:10,14:21,23:32,34:38, 40:42,44:55,57:59,63:65,99:136,142:151)]
-
+clean_data = raw_data # duplicate df
+clean_data = clean_data[,-c(1:7,9:10,14:21,23:32,34:38, 40:42,44:55,57:59,63:65,99:136,142:151)] # keep only needed columns
 variables_clean = lapply(clean_data[colnames(clean_data)], var_lab) # see what each column means
 
-# remove DK/NA values from satisfaction questions
 
 clean_data$q1_1 = dplyr::na_if(clean_data$q1_1, 5) # recode DK/NA as NA
 clean_data$q1_10 = dplyr::na_if(clean_data$q1_10, 5) # recode DK/NA as NA
@@ -60,10 +55,10 @@ clean_data = clean_data %>% rename(
 
 clean_data = mutate(clean_data,
                     pt_satisfaction = case_when(
-                      pt_satisfaction == 1 ~ 4,
-                      pt_satisfaction == 2 ~ 3,
-                      pt_satisfaction == 3 ~ 2,
-         pt_satisfaction == 4 ~ 1
+                      pt_satisfaction == "Very satisfied" ~ 4,
+                      pt_satisfaction == "Rather satisfied" ~ 3,
+                      pt_satisfaction == "Rather unsatisfied" ~ 2,
+         pt_satisfaction == "Not at all satisfied" ~ 1
        )
          )
 
@@ -75,10 +70,10 @@ add_val_lab(clean_data$pt_satisfaction) = num_lab("4 Very satisfied
 
 clean_data = mutate(clean_data,
                     air_satisfaction = case_when(
-                      air_satisfaction == 1 ~ 4,
-                      air_satisfaction == 2 ~ 3,
-                      air_satisfaction == 3 ~ 2,
-                      air_satisfaction == 4 ~ 1,
+                      air_satisfaction == "Very satisfied" ~ 4,
+                      air_satisfaction == "Rather satisfied" ~ 3,
+                      air_satisfaction == "Rather unsatisfied" ~ 2,
+                      air_satisfaction == "Not at all satisfied" ~ 1,
                       TRUE ~ NA_real_
                     )
 )
@@ -92,20 +87,36 @@ add_val_lab(clean_data$air_satisfaction) = num_lab("4 Very satisfied
 
 clean_data = mutate(clean_data,
                     cc_fight = case_when(
-                      cc_fight == 1 ~ 4,
-                      cc_fight == 2 ~ 3,
-                      cc_fight == 3 ~ 2,
-                      cc_fight == 4 ~ 1,
+                      cc_fight == "Strongly agree" ~ 4,
+                      cc_fight == "Somewhat agree" ~ 3,
+                      cc_fight == "Somewhat disagree" ~ 2,
+                      cc_fight == "Strongly disagree" ~ 1,
                       TRUE ~ NA_real_
                     )
 )
 
-add_val_lab(clean_data$cc_fight) = num_lab("4 Very satisfied
+add_val_lab(clean_data$cc_fight) = num_lab("4 Strongly agree
+                                                   3 Somewhat agree
+                                                   2 Somewhat disagree
+                                                   1 Strongly disagree
+                                                   ")
+
+
+clean_data = mutate(clean_data,
+                    financial_situation = case_when(
+                      financial_situation == "Very satisfied" ~ 4,
+                      financial_situation == "Rather satisfied" ~ 3,
+                      financial_situation == "Rather unsatisfied" ~ 2,
+                      financial_situation == "Not at all satisfied" ~ 1,
+                      TRUE ~ NA_real_
+                    )
+)
+
+add_val_lab(clean_data$financial_situation) = num_lab("4 Very satisfied
                                                    3 Rather satisfied
                                                    2 Rather unsatisfied
                                                    1 Very unsatisfied
                                                    ")
-
 
 clean_data = apply_labels(clean_data,
                           pt_satisfaction = "Satisfaction with public transport in the city",
@@ -113,13 +124,55 @@ clean_data = apply_labels(clean_data,
                           cc_fight = "Satisfaction with the way the city fights climate change"
                           )
 
+
+clean_data = mutate(clean_data,
+                    env_concern = case_when(
+                      env_concern == "Not mentioned" ~ 0,
+                      env_concern == "Air pollution" ~ 1,
+                      TRUE ~ NA_real_
+                    )
+)
+
+clean_data = mutate(clean_data,
+                    car_commute = case_when(
+                      car_commute == "Not mentioned" ~ 0,
+                      car_commute == "Mentioned" ~ 1,
+                      TRUE ~ NA_real_
+                    )
+)
+
+
+clean_data = mutate(clean_data,
+                    pt_commute = case_when(
+                      pt_commute == "Not mentioned" ~ 0,
+                      pt_commute == "Mentioned" ~ 1,
+                      TRUE ~ NA_real_
+                    )
+)
+
+
+clean_data = mutate(clean_data,
+                    bicyle_commute = case_when(
+                      bicyle_commute == "Not mentioned" ~ 0,
+                      bicyle_commute == "Mentioned" ~ 1,
+                      TRUE ~ NA_real_
+                    )
+)
+
+clean_data = mutate(clean_data,
+                    walk_commute = case_when(
+                      walk_commute == "Not mentioned" ~ 0,
+                      walk_commute == "Mentioned" ~ 1,
+                      TRUE ~ NA_real_
+                    )
+)
+
+
+
+
 # create a column for gender
-clean_data = transform(clean_data, female = ifelse(clean_data$gender == 2,1,0)) # value == 1 if female
-clean_data = transform(clean_data, male = ifelse(clean_data$gender == 1,1,0)) # value == 1 if male
-
-# create column for northern countries citizens
-
-
+clean_data = transform(clean_data, female = ifelse(clean_data$gender == "Female",1,0)) # value == 1 if female
+clean_data = transform(clean_data, male = ifelse(clean_data$gender == "Male",1,0)) # value == 1 if male
 
 # add air pollution data
 clean_data$cities = unlabelled(clean_data$cities) # remove labels from cities colum
@@ -212,8 +265,10 @@ clean_data = apply_labels(clean_data,
 #                       TRUE ~ 0
 #                     ))
 
-clean_data = clean_data[complete.cases(clean_data),] # keep only complete cases
+# remove financial situation, as it has many NAs
+clean_data = clean_data[,-c(which(colnames(clean_data) == "financial_situation"))]
+clean_data = clean_data[complete.cases(clean_data), ]
 
 # save clean_data as csv and dta
-write.csv(clean_data,"data/clean_data.csv") # write as csv
+write.csv(clean_data,"data/clean_data.csv", row.names = FALSE) # write as csv
 write_dta(clean_data, "data/clean_data.dta") # write as dta
